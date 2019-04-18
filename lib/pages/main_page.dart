@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-import 'shop_items_page.dart';
+
 
 class MainPage extends StatefulWidget
 {
@@ -163,7 +163,7 @@ class _MainPageState extends State<MainPage>
                     )
                   ),
                   Padding(padding: EdgeInsets.only(bottom: 16.0)),
-                  Text('English', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 24.0)),
+                  Text('SST', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 24.0)),
                  
                 ]
               ),
@@ -189,12 +189,49 @@ class _MainPageState extends State<MainPage>
                     )
                   ),
                   Padding(padding: EdgeInsets.only(bottom: 16.0)),
-                  Text('SST', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 24.0)),
+                  Text('English', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 24.0)),
                   
                 ]
               ),
             ),
           ),
+          _buildTile(
+            Padding
+              (
+              padding: const EdgeInsets.all(24.0),
+              child: Row
+                (
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>
+                  [
+                    Column
+                      (
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>
+                      [
+
+                        Text('Out of Syllabus', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 30.0))
+                      ],
+                    ),
+                    Material
+                      (
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(24.0),
+                        child: Center
+                          (
+                            child: Padding
+                              (
+                              padding: EdgeInsets.all(16.0),
+                              child: Icon(Icons.store, color: Colors.white, size: 30.0),
+                            )
+                        )
+                    )
+                  ]
+              ),
+            ),
+          )
           
           
         ],
@@ -204,6 +241,7 @@ class _MainPageState extends State<MainPage>
           StaggeredTile.extent(1, 180.0),
           StaggeredTile.extent(1, 180.0),
           StaggeredTile.extent(1, 180.0),
+         StaggeredTile.extent(2, 110.0),
           
           
         ],
