@@ -3,6 +3,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
+enum AuthMode{
+  SignUp,
+  Login
+}
+
 
 
 class SignUp extends StatefulWidget {
@@ -13,6 +18,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _AuthPageState extends State<SignUp> {
+  AuthMode _authMode = AuthMode.Login;
   String _emailValue;
   String _passwordValue;
   bool _acceptTerms = false;
@@ -59,12 +65,7 @@ class _AuthPageState extends State<SignUp> {
       decoration: InputDecoration(
           labelText: 'Password', filled: true, fillColor: Colors.white),
       obscureText: true,
-      onSaved: (String value) {
-        
-           _passwordValue = value;
-   
-         
-      },
+      
     );
   }
 
@@ -82,7 +83,7 @@ class _AuthPageState extends State<SignUp> {
 
   void _submitForm() {
   _formkey.currentState.save();
-   Signup(_emailValue, _passwordValue);
+  _authMode==AuthMode.Login ? Login(_emailValue,_passwordValue) : Signup(_emailValue, _passwordValue);
    
   }
   Future <Map<String,dynamic>> Signup( String email, String password)
@@ -93,7 +94,22 @@ class _AuthPageState extends State<SignUp> {
        'returnSecureToken': true
      };
     final http.Response response = await http.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDzhDqanWOy7-GOyCgoi8NjN9bMSp40Fbc',
-       body: json.encode(user));
+       body: json.encode(user),
+       headers: {'Content-Type': 'application/json'},
+       );
+   }
+
+   Future <Map<String,dynamic>> Login(String email,String password)
+   async{
+     final Map<String,dynamic> user={
+       'email': email,
+       'password': password,
+       'returnSecureToken': true
+     };
+
+    final http.Response response = await http.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDzhDqanWOy7-GOyCgoi8NjN9bMSp40Fbc',
+    body: json.encode(user),
+    headers: {'Content-Type': 'application/json'});
    }
 
   @override
@@ -127,7 +143,9 @@ class _AuthPageState extends State<SignUp> {
                   SizedBox(
                     height: 10.0,
                   ),
-                  _confirmPasswordTextField(),
+
+                  _authMode == AuthMode.SignUp ? _confirmPasswordTextField() : Container(),
+
                   _buildAcceptSwitch(),
                   SizedBox(
                     height: 10.0,
@@ -135,8 +153,19 @@ class _AuthPageState extends State<SignUp> {
                   RaisedButton(
                     color: Colors.deepOrange,
                     textColor: Colors.white,
-                    child: Text('SIGNUP'),
+                    child: Text('${_authMode == AuthMode.Login? 'LOGIN': 'SIGNUP'}'),
                     onPressed: _submitForm,
+                  ),
+                  SizedBox(height: 10.0,),
+
+                  FlatButton(
+                    child: Text('Switch to ${_authMode == AuthMode.Login? 'SIGNUP': 'LOGIN'}'),
+                    onPressed: (){
+                      setState(() {
+                         _authMode = _authMode == AuthMode.Login? AuthMode.SignUp : AuthMode.Login;
+                      });
+                     
+                    },
                   ),
                 ],
               ),
