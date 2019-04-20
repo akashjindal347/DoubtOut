@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
 
 
 
@@ -15,6 +17,7 @@ class _AuthPageState extends State<SignUp> {
   String _passwordValue;
   bool _acceptTerms = false;
   final GlobalKey<FormState> _formkey= new GlobalKey<FormState>();
+  TextEditingController _passwordController = new TextEditingController();
 
  
 
@@ -33,6 +36,25 @@ class _AuthPageState extends State<SignUp> {
   }
 
   Widget _buildPasswordTextField() {
+    return TextFormField(
+      controller: _passwordController,
+      decoration: InputDecoration(
+          labelText: 'Confirm Password', filled: true, fillColor: Colors.white),
+      obscureText: true,
+      validator: (String value){
+        if(_passwordController.text!=value){
+          return 'passwords do not match';
+        }
+      },
+      onSaved: (String value) {
+        
+           _passwordValue = value;
+   
+         
+      },
+    );
+  }
+  Widget _confirmPasswordTextField() {
     return TextFormField(
       decoration: InputDecoration(
           labelText: 'Password', filled: true, fillColor: Colors.white),
@@ -60,14 +82,19 @@ class _AuthPageState extends State<SignUp> {
 
   void _submitForm() {
   _formkey.currentState.save();
+   Signup(_emailValue, _passwordValue);
    
-   Map<String,String> user={
-     'email': _emailValue,
-      'password': _passwordValue,
-
-   };
-    
   }
+  Future <Map<String,dynamic>> Signup( String email, String password)
+   async{
+     final Map<String,dynamic> user={
+       'email': email,
+       'password': password,
+       'returnSecureToken': true
+     };
+    final http.Response response = await http.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDzhDqanWOy7-GOyCgoi8NjN9bMSp40Fbc',
+       body: json.encode(user));
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +105,7 @@ class _AuthPageState extends State<SignUp> {
       ),
       home:Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Signup'),
         backgroundColor: Colors.deepOrange,
       ),
       body: Container(
@@ -97,6 +124,10 @@ class _AuthPageState extends State<SignUp> {
                     height: 10.0,
                   ),
                   _buildPasswordTextField(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  _confirmPasswordTextField(),
                   _buildAcceptSwitch(),
                   SizedBox(
                     height: 10.0,
