@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:the_gorgeous_login/style/theme.dart' as Theme;
-import 'package:the_gorgeous_login/utils/bubble_indication_painter.dart';
+import '../style/theme.dart' as Theme;
+import '../utils/bubble_indication_painter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
