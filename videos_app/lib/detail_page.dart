@@ -1,5 +1,6 @@
 import 'package:beautiful_list/model/lesson.dart';
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class DetailPage extends StatelessWidget {
   final Video video;
@@ -25,39 +26,40 @@ class DetailPage extends StatelessWidget {
       ],
     );
 
-    final topContent = Stack(
-      children: <Widget>[
-        Container(
-            padding: EdgeInsets.only(left: 10.0),
-            height: MediaQuery.of(context).size.height * 0.5,
-            decoration: new BoxDecoration(
-              
-            )),
-        Container(
-          height: MediaQuery.of(context).size.height * 0.5,
-          padding: EdgeInsets.all(40.0),
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(color: Colors.amberAccent),
-          child: Center(
-            child: topContentText,
-          ),
-        ),
-        Positioned(
-          left: 8.0,
-          top: 60.0,
-          child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(Icons.arrow_back, color: Colors.white),
-          ),
-        )
-      ],
+    final topContent = Container(
+      child: YoutubePlayer(
+    context: context,
+    videoId:YoutubePlayer.convertUrlToId(video.link),
+    flags: YoutubePlayerFlags(
+      autoPlay: true,
+      showVideoProgressIndicator: true,
+    ),
+    videoProgressIndicatorColor: Colors.amber,
+    progressColors: ProgressColors(
+      playedColor: Colors.amber,
+      handleColor: Colors.amberAccent,
+    ),
+    onPlayerInitialized: (controller) {
+      // _controller = controller;
+      // _controller.addListener(listener);
+    },
+),
     );
 
-    final bottomContentText = Text(
+    final bottomContentText =Column(
+      children: <Widget>[
+        Text(
       video.name,
       style: TextStyle(fontSize: 18.0),
+    ),
+    SizedBox(
+      height: 40.0,
+    ),
+    Text(
+      "Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. ... The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn't distract from the layout.",
+      style: TextStyle(fontSize: 18.0),
+    ),
+      ],
     );
     
     final bottomContent = Container(
