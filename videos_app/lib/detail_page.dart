@@ -2,8 +2,8 @@ import 'package:beautiful_list/model/lesson.dart';
 import 'package:flutter/material.dart';
 
 class DetailPage extends StatelessWidget {
-  final Lesson lesson;
-  DetailPage({Key key, this.lesson}) : super(key: key);
+  final Video video;
+  DetailPage({Key key, this.video}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     
@@ -56,7 +56,7 @@ class DetailPage extends StatelessWidget {
     );
 
     final bottomContentText = Text(
-      lesson.content,
+      video.name,
       style: TextStyle(fontSize: 18.0),
     );
     

@@ -1,10 +1,10 @@
-class Lesson {
-  String title;
-  String level;
-  double indicatorValue;
-  int price;
-  String content;
+class Video {
+  int id;
+  String name;
+  String link;
+  String subject;
 
-  Lesson(
-      {this.title, this.level, this.indicatorValue, this.price, this.content});
+  Video(
+      {this.id, this.name, this.link, this.subject}
+      );
 }

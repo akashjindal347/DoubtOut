@@ -1,6 +1,8 @@
 import 'package:beautiful_list/model/lesson.dart';
 import 'package:flutter/material.dart';
 import 'package:beautiful_list/detail_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() => runApp(new MyApp());
 
@@ -12,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: new ThemeData(
           primaryColor: Colors.white, fontFamily: 'Raleway'),
-      home: new ListPage(title: 'Lessons'),
+      home: new ListPage(title: 'Videos'),
       // home: DetailPage(),
     );
   }
@@ -28,17 +30,20 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> {
-  List lessons;
+  List<Video> videos;
 
   @override
   void initState() {
-    lessons = getLessons();
+    setState(() {
+       videos = getVideos();
+    });
+    
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    ListTile makeListTile(Lesson lesson) => ListTile(
+    ListTile makeListTile(Video video) => ListTile(
           contentPadding:
               EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           leading: Container(
@@ -49,7 +54,7 @@ class _ListPageState extends State<ListPage> {
             child: Icon(Icons.play_circle_filled, color: Colors.amber),
           ),
           title: Text(
-            lesson.title,
+            video.name,
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
           // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
@@ -61,7 +66,7 @@ class _ListPageState extends State<ListPage> {
                 flex: 4,
                 child: Padding(
                     padding: EdgeInsets.only(left: 10.0),
-                    child: Text(lesson.level,
+                    child: Text("",
                         style: TextStyle(color: Colors.black))),
               )
             ],
@@ -72,17 +77,17 @@ class _ListPageState extends State<ListPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => DetailPage(lesson: lesson)));
+                    builder: (context) => DetailPage(video: video)));
           },
         );
 
-    Card makeCard(Lesson lesson) => Card(
+    Card makeCard(Video video) => Card(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           child: Container(
             decoration: BoxDecoration(color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            child: makeListTile(lesson),
+            child: makeListTile(video),
           ),
         );
 
@@ -91,9 +96,9 @@ class _ListPageState extends State<ListPage> {
       child: ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        itemCount: lessons.length,
+        itemCount: videos.length,
         itemBuilder: (BuildContext context, int index) {
-          return makeCard(lessons[index]);
+          return makeCard(videos[index]);
         },
       ),
     );
@@ -146,56 +151,44 @@ class _ListPageState extends State<ListPage> {
   }
 }
 
-List getLessons() {
-  return [
-    Lesson(
-        title: "Introduction to Driving",
-        level: "Science",
-        indicatorValue: 0.33,
-        price: 20,
-        content:
-            "Start by taking a couple of minutes to read the info in this section. Launch your app and click on the Settings menu.  While on the settings page, click the Save button.  You should see a circular progress indicator display in the middle of the page and the user interface elements cannot be clicked due to the modal barrier that is constructed."),
-    Lesson(
-        title: "Observation at Junctions",
-        level: "Beginner",
-        indicatorValue: 0.33,
-        price: 50,
-        content:
-            "Start by taking a couple of minutes to read the info in this section. Launch your app and click on the Settings menu.  While on the settings page, click the Save button.  You should see a circular progress indicator display in the middle of the page and the user interface elements cannot be clicked due to the modal barrier that is constructed."),
-    Lesson(
-        title: "Reverse parallel Parking",
-        level: "Intermidiate",
-        indicatorValue: 0.66,
-        price: 30,
-        content:
-            "Start by taking a couple of minutes to read the info in this section. Launch your app and click on the Settings menu.  While on the settings page, click the Save button.  You should see a circular progress indicator display in the middle of the page and the user interface elements cannot be clicked due to the modal barrier that is constructed."),
-    Lesson(
-        title: "Reversing around the corner",
-        level: "Intermidiate",
-        indicatorValue: 0.66,
-        price: 30,
-        content:
-            "Start by taking a couple of minutes to read the info in this section. Launch your app and click on the Settings menu.  While on the settings page, click the Save button.  You should see a circular progress indicator display in the middle of the page and the user interface elements cannot be clicked due to the modal barrier that is constructed."),
-    Lesson(
-        title: "Incorrect Use of Signal",
-        level: "Advanced",
-        indicatorValue: 1.0,
-        price: 50,
-        content:
-            "Start by taking a couple of minutes to read the info in this section. Launch your app and click on the Settings menu.  While on the settings page, click the Save button.  You should see a circular progress indicator display in the middle of the page and the user interface elements cannot be clicked due to the modal barrier that is constructed."),
-    Lesson(
-        title: "Engine Challenges",
-        level: "Advanced",
-        indicatorValue: 1.0,
-        price: 50,
-        content:
-            "Start by taking a couple of minutes to read the info in this section. Launch your app and click on the Settings menu.  While on the settings page, click the Save button.  You should see a circular progress indicator display in the middle of the page and the user interface elements cannot be clicked due to the modal barrier that is constructed."),
-    Lesson(
-        title: "Self Driving Car",
-        level: "Advanced",
-        indicatorValue: 1.0,
-        price: 50,
-        content:
-            "Start by taking a couple of minutes to read the info in this section. Launch your app and click on the Settings menu.  While on the settings page, click the Save button.  You should see a circular progress indicator display in the middle of the page and the user interface elements cannot be clicked due to the modal barrier that is constructed.  ")
-  ];
+  getVideos() {
+  List <Video> _videos =[];
+   List <Video> fetchedVideos = [];
+  http.get('https://doubtout-videos-api.herokuapp.com/api/').then((http.Response response)
+  {
+    
+    final List <dynamic> videosListdata = json.decode(response.body);
+    int length = videosListdata.length;
+    // print(videosListdata[0]["id"]);
+    for(var i =0;i<length;i++)
+    {
+      Video __video = Video(
+        id: videosListdata[i]["id"],
+        name:videosListdata[i]["name"],
+        link:videosListdata[i]["link"],
+      );
+      fetchedVideos.add(__video);
+     
+    }
+    // videosListdata.forEach((String ,Map<String,dynamic> videosdata )
+    // {
+    //   final Video video = Video(
+    //     id: videosdata['id'],
+    //     name: videosdata['name'],
+    //     link: videosdata['link'],
+    //     subject: videosdata['subject'],
+    //   );
+    //   fetchedVideos.add(video);
+    //  print(video);
+    // });
+    //  print(fetchedVideos);
+    _videos = fetchedVideos;
+  
+  });
+
+  
+  return _videos;
+
+
+  
 }
